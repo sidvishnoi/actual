@@ -1,5 +1,6 @@
 *.a
 *.wasm
+*.dylib
 config.h
 config.h-e
 config.log
