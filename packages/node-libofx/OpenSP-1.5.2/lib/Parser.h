@@ -57,21 +57,21 @@ struct StandardSyntaxSpec;
 class Undo;
 class Decl;
 
-class Parser : private ParserState { 
+class Parser : private ParserState {
 public:
   Parser(const SgmlParser::Params &);
   Event *nextEvent();
   void parseAll(EventHandler &, const volatile sig_atomic_t *cancelPtr);
-  ParserState::sdPointer;
-  ParserState::instanceSyntaxPointer;
-  ParserState::prologSyntaxPointer;
-  ParserState::activateLinkType;
-  ParserState::allLinkTypesActivated;
-  ParserState::entityManager;
-  ParserState::entityCatalog;
-  ParserState::baseDtd;
-  ParserState::options;
-  ParserState::instantiateDtd;
+  using ParserState::sdPointer;
+  using ParserState::instanceSyntaxPointer;
+  using ParserState::prologSyntaxPointer;
+  using ParserState::activateLinkType;
+  using ParserState::allLinkTypesActivated;
+  using ParserState::entityManager;
+  using ParserState::entityCatalog;
+  using ParserState::baseDtd;
+  using ParserState::options;
+  using ParserState::instantiateDtd;
   friend class PiAttspecParser;
 private:
   Parser(const Parser &);	// undefined

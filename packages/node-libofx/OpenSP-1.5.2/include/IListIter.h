@@ -16,9 +16,9 @@ class IListIter : private IListIterBase {
 public:
   IListIter(const IList<T> &list) : IListIterBase(list) { }
   T *cur() const { return (T *)IListIterBase::cur(); }
-  
-  IListIterBase::next;
-  IListIterBase::done;
+
+  using IListIterBase::next;
+  using IListIterBase::done;
 };
 
 #ifdef SP_NAMESPACE
