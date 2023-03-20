@@ -1,0 +1,10 @@
+*.a
+*.wasm
+config.h
+config.h-e
+config.log
+config.status
+libtool
+Makefile
+msggen.pl
+.deps
