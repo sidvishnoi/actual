@@ -1,4 +1,6 @@
 *.a
+*.la
+*.lai
 *.wasm
 *.dylib
 config.h
@@ -7,5 +9,6 @@ config.log
 config.status
 libtool
 Makefile
+po/Makefile.in
 msggen.pl
 .deps
