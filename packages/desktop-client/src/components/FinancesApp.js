@@ -30,6 +30,7 @@ import { getIsOutdated, getLatestVersion } from '../util/versions';
 import Account from './accounts/Account';
 import MobileAccount from './accounts/MobileAccount';
 import MobileAccounts from './accounts/MobileAccounts';
+import MobileTransactionEdit from './accounts/MobileTransactionEdit';
 import BankSyncStatus from './BankSyncStatus';
 import Budget from './budget';
 import { BudgetMonthCountProvider } from './budget/BudgetMonthCountContext';
@@ -150,6 +151,9 @@ function StackedRoutesInner({ location }) {
         path="/accounts"
         element={isNarrowWidth ? <MobileAccounts /> : <Account />}
       />
+      <Route path="/accounts/transaction/new" exact>
+        <MobileTransactionEdit />
+      </Route>
     </Routes>
   );
 }

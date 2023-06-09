@@ -134,11 +134,7 @@ export default function AccountDetails({
           >
             {account.name}
           </View>
-          {/*
-              TODO: connect to an add transaction modal
-              Only left here but hidden for flex centering of the account name.
-          */}
-          <Link to="transaction/new" style={{ visibility: 'hidden' }}>
+          <Link to="transaction/new">
             <Button
               bare
               style={{ justifyContent: 'center', width: LEFT_RIGHT_FLEX_WIDTH }}

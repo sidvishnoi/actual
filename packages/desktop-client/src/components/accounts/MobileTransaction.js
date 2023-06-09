@@ -1,10 +1,4 @@
-import React, {
-  PureComponent,
-  Component,
-  forwardRef,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { Component, forwardRef, useEffect, useRef } from 'react';
 
 import { useFocusRing } from '@react-aria/focus';
 import { useListBox, useListBoxSection, useOption } from '@react-aria/listbox';
@@ -16,15 +10,17 @@ import memoizeOne from 'memoize-one';
 import * as monthUtils from 'loot-core/src/shared/months';
 import { getScheduledAmount } from 'loot-core/src/shared/schedules';
 import {
-  titleFirst,
-  integerToCurrency,
   groupById,
+  integerToCurrency,
+  titleFirst,
 } from 'loot-core/src/shared/util';
 
 import ArrowsSynchronize from '../../icons/v2/ArrowsSynchronize';
 import CheckCircle1 from '../../icons/v2/CheckCircle1';
 import { styles, colors } from '../../style';
 import { Text, TextOneLine, View } from '../common';
+
+import { getDescriptionPretty, lookupName } from './MobileTransactionEdit';
 
 const zIndices = { SECTION_HEADING: 10 };
 
@@ -33,22 +29,6 @@ let getAccountsById = memoizeOne(accounts => groupById(accounts));
 
 function isPreviewId(id) {
   return id.indexOf('preview/') !== -1;
-}
-
-function getDescriptionPretty(transaction, payee, transferAcct) {
-  let { amount } = transaction;
-
-  if (transferAcct) {
-    return `Transfer ${amount > 0 ? 'from' : 'to'} ${transferAcct.name}`;
-  } else if (payee) {
-    return payee.name;
-  }
-
-  return '';
-}
-
-function lookupName(items, id) {
-  return items.find(item => item.id === id).name;
 }
 
 // TODO: delete if not needed
@@ -99,149 +79,146 @@ function Status({ status }) {
   );
 }
 
-class Transaction extends PureComponent {
-  render() {
-    const {
-      transaction,
-      accounts,
-      categories,
-      payees,
-      showCategory,
-      added,
-      // onSelect,
-      style,
-    } = this.props;
-    let {
-      id,
-      payee: payeeId,
-      amount,
-      category,
-      cleared,
-      is_parent,
-      notes,
-      schedule,
-    } = transaction;
+export function Transaction(props) {
+  const {
+    transaction,
+    accounts,
+    categories,
+    payees,
+    showCategory,
+    added,
+    onSelect,
+    style,
+  } = props;
+  let {
+    id,
+    payee: payeeId,
+    amount,
+    category,
+    cleared,
+    is_parent,
+    notes,
+    schedule,
+  } = transaction;
 
-    if (isPreviewId(id)) {
-      amount = getScheduledAmount(amount);
-    }
+  if (isPreviewId(id)) {
+    amount = getScheduledAmount(amount);
+  }
 
-    let categoryName = category ? lookupName(categories, category) : null;
+  let categoryName = category ? lookupName(categories, category) : null;
 
-    let payee = payees && payeeId && getPayeesById(payees)[payeeId];
-    let transferAcct =
-      payee &&
-      payee.transfer_acct &&
-      getAccountsById(accounts)[payee.transfer_acct];
+  let payee = payees && payeeId && getPayeesById(payees)[payeeId];
+  let transferAcct =
+    payee &&
+    payee.transfer_acct &&
+    getAccountsById(accounts)[payee.transfer_acct];
 
-    let prettyDescription = getDescriptionPretty(
-      transaction,
-      payee,
-      transferAcct,
-    );
-    let prettyCategory = transferAcct
-      ? 'Transfer'
-      : is_parent
-      ? 'Split'
-      : categoryName;
+  let prettyDescription = getDescriptionPretty(
+    transaction,
+    payee,
+    transferAcct,
+  );
+  let prettyCategory = transferAcct
+    ? 'Transfer'
+    : is_parent
+    ? 'Split'
+    : categoryName;
 
-    let isPreview = isPreviewId(id);
-    let textStyle = isPreview && {
-      fontStyle: 'italic',
-      color: colors.n5,
-    };
+  let isPreview = isPreviewId(id);
+  let textStyle = isPreview && {
+    fontStyle: 'italic',
+    color: colors.n5,
+  };
 
-    return (
-      // <Button
-      //   onClick={() => onSelect(transaction)}
-      //   style={{
-      //     backgroundColor: 'white',
-      //     border: 'none',
-      //     width: '100%',
-      //     '&:active': { opacity: 0.1 }
-      //   }}
-      // >
-      <ListItem
+  return (
+    <ListItem
+      style={[
+        {
+          backgroundColor: 'white',
+          flex: 1,
+          height: 60,
+          border: 'none',
+          width: '100%',
+          '&:active': { opacity: 0.1 },
+        },
+        isPreview && { backgroundColor: colors.n11 },
+
+        style,
+      ]}
+      onClick={() => onSelect(transaction)}
+    >
+      <View style={[{ flex: 1 }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {schedule && (
+            <ArrowsSynchronize
+              style={{
+                width: 12,
+                height: 12,
+                marginRight: 5,
+                color: textStyle.color || colors.n1,
+              }}
+            />
+          )}
+          <TextOneLine
+            style={[
+              styles.text,
+              textStyle,
+              { fontSize: 14, fontWeight: added ? '600' : '400' },
+              prettyDescription === '' && {
+                color: colors.n6,
+                fontStyle: 'italic',
+              },
+            ]}
+          >
+            {prettyDescription || 'Empty'}
+          </TextOneLine>
+        </View>
+        {isPreview ? (
+          <Status status={notes} />
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 3,
+            }}
+          >
+            <CheckCircle1
+              style={{
+                width: 11,
+                height: 11,
+                color: cleared ? colors.g6 : colors.n8,
+                marginRight: 5,
+              }}
+            />
+            {showCategory && (
+              <TextOneLine
+                style={{
+                  fontSize: 11,
+                  marginTop: 1,
+                  fontWeight: '400',
+                  color: prettyCategory ? colors.n3 : colors.p7,
+                  fontStyle: prettyCategory ? null : 'italic',
+                  textAlign: 'left',
+                }}
+              >
+                {prettyCategory || 'Uncategorized'}
+              </TextOneLine>
+            )}
+          </View>
+        )}
+      </View>
+      <Text
         style={[
-          { flex: 1, height: 60, padding: '5px 10px' }, // remove padding when Button is back
-          isPreview && { backgroundColor: colors.n11 },
-          style,
+          styles.text,
+          textStyle,
+          { marginLeft: 25, marginRight: 5, fontSize: 14 },
         ]}
       >
-        <View style={[{ flex: 1 }]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {schedule && (
-              <ArrowsSynchronize
-                style={{
-                  width: 12,
-                  height: 12,
-                  marginRight: 5,
-                  color: textStyle.color || colors.n1,
-                }}
-              />
-            )}
-            <TextOneLine
-              style={[
-                styles.text,
-                textStyle,
-                { fontSize: 14, fontWeight: added ? '600' : '400' },
-                prettyDescription === '' && {
-                  color: colors.n6,
-                  fontStyle: 'italic',
-                },
-              ]}
-            >
-              {prettyDescription || 'Empty'}
-            </TextOneLine>
-          </View>
-          {isPreview ? (
-            <Status status={notes} />
-          ) : (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 3,
-              }}
-            >
-              <CheckCircle1
-                style={{
-                  width: 11,
-                  height: 11,
-                  color: cleared ? colors.g6 : colors.n8,
-                  marginRight: 5,
-                }}
-              />
-              {showCategory && (
-                <TextOneLine
-                  style={{
-                    fontSize: 11,
-                    marginTop: 1,
-                    fontWeight: '400',
-                    color: prettyCategory ? colors.n3 : colors.p7,
-                    fontStyle: prettyCategory ? null : 'italic',
-                    textAlign: 'left',
-                  }}
-                >
-                  {prettyCategory || 'Uncategorized'}
-                </TextOneLine>
-              )}
-            </View>
-          )}
-        </View>
-        <Text
-          style={[
-            styles.text,
-            textStyle,
-            { marginLeft: 25, marginRight: 5, fontSize: 14 },
-          ]}
-        >
-          {integerToCurrency(amount)}
-        </Text>
-      </ListItem>
-      // </Button>
-    );
-  }
+        {integerToCurrency(amount)}
+      </Text>
+    </ListItem>
+  );
 }
 
 export class TransactionList extends Component {
@@ -280,6 +257,7 @@ export class TransactionList extends Component {
       transactions,
       scrollProps = {},
       onLoadMore,
+      onSelect,
       // refreshControl
     } = this.props;
 
@@ -334,7 +312,7 @@ export class TransactionList extends Component {
                         payees={this.props.payees}
                         showCategory={this.props.showCategory}
                         added={this.props.isNew(transaction.id)}
-                        onSelect={() => {}} // onSelect(transaction)}
+                        onSelect={() => onSelect(transaction)}
                       />
                     </Item>
                   );
