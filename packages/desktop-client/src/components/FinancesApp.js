@@ -51,6 +51,7 @@ import LinkSchedule from './schedules/LinkSchedule';
 import PostsOfflineNotification from './schedules/PostsOfflineNotification';
 import Settings from './settings';
 import Titlebar, { TitlebarProvider } from './Titlebar';
+import Sheet from './common/Sheet';
 
 function NarrowNotSupported({ children, redirectTo = '/budget' }) {
   const { isNarrowWidth } = useResponsive();
@@ -152,7 +153,9 @@ function StackedRoutesInner({ location }) {
         element={isNarrowWidth ? <MobileAccounts /> : <Account />}
       />
       <Route path="/accounts/transaction/new" exact>
-        <MobileTransactionEdit />
+        <Sheet>
+          <MobileTransactionEdit />
+        </Sheet>
       </Route>
     </Routes>
   );
