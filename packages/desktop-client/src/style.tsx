@@ -170,7 +170,7 @@ const colorsDark = {
   formInputTextSelection: colorPallet.gray800,
   formInputShadowSelected: colorPallet.purple300,
   formInputTextHighlight: colorPallet.purple300,
-};
+} as const;
 
 const colorsLight = {
   pageBackground: colorPallet.gray50,
@@ -265,14 +265,26 @@ const colorsLight = {
   formInputTextSelection: colorPallet.gray100,
   formInputShadowSelected: colorPallet.purple600,
   formInputTextHighlight: colorPallet.purple600,
+} as const;
+
+const colorThemes = {
+  dark: colorsDark,
+  light: colorsLight,
 };
 
-const colorThemes = [
-  { name: 'actual-dark', colors: colorsDark, type: 'dark' },
-  { name: 'actual-light', colors: colorsLight, type: 'light' },
-];
+export function ThemeStyle({ theme }: { theme: keyof typeof colorThemes }) {
+  let themeColors = colorThemes[theme];
+  let css = Object.keys(themeColors)
+    .map(key => {
+      return `--${key}: ${themeColors[key]};`;
+    })
+    .join('\n');
+  return <style>{`:root { ${css} }`}</style>;
+}
 
-export const colorsm = colorThemes[0].colors;
+export const colorsm = Object.fromEntries(
+  Object.keys(colorsDark).map(key => [key, `var(--${key})`]),
+) as Record<keyof typeof colorsDark, string>;
 
 const _colors = {
   y1: '#733309',
