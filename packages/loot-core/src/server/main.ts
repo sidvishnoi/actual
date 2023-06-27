@@ -40,8 +40,7 @@ import * as db from './db';
 import * as mappings from './db/mappings';
 import * as encryption from './encryption';
 import { APIError, TransactionError, PostError, RuleError } from './errors';
-import * as YNAB4 from './importers/ynab4';
-import * as YNAB5 from './importers/ynab5';
+import { handleBudgetImport } from './importers';
 import app from './main-app';
 import { mutator, runHandler } from './mutators';
 import notesApp from './notes/app';
@@ -68,7 +67,6 @@ import toolsApp from './tools/app';
 import { withUndo, clearUndo, undo, redo } from './undo';
 import { updateVersion } from './update';
 import { uniqueFileName, idFromFileName } from './util/budget-name';
-import { handleBudgetImport } from './importers';
 
 let DEMO_BUDGET_ID = '_demo-budget';
 let TEST_BUDGET_ID = '_test-budget';
