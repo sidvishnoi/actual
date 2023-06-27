@@ -1,8 +1,6 @@
 import './polyfills';
 import * as injectAPI from '@actual-app/api/injected';
 import * as CRDT from '@actual-app/crdt';
-import * as YNAB4 from '@actual-app/import-ynab4/importer';
-import * as YNAB5 from '@actual-app/import-ynab5/importer';
 
 import { createTestBudget } from '../mocks/budget';
 import { captureException, captureBreadcrumb } from '../platform/exceptions';
@@ -42,6 +40,8 @@ import * as db from './db';
 import * as mappings from './db/mappings';
 import * as encryption from './encryption';
 import { APIError, TransactionError, PostError, RuleError } from './errors';
+import * as YNAB4 from './importers/ynab4';
+import * as YNAB5 from './importers/ynab5';
 import app from './main-app';
 import { mutator, runHandler } from './mutators';
 import notesApp from './notes/app';
