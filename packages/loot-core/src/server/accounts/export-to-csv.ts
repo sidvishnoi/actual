@@ -1,6 +1,7 @@
 // @ts-strict-ignore
 import csvStringify from 'csv-stringify/lib/sync';
 
+import type { Query } from '../../shared/query';
 import { integerToAmount } from '../../shared/util';
 import { runQuery as aqlQuery } from '../aql';
 
@@ -56,7 +57,7 @@ export async function exportToCSV(
   return csvStringify(transactionsForExport, { header: true });
 }
 
-export async function exportQueryToCSV(query) {
+export async function exportQueryToCSV(query: Query) {
   const { data: transactions } = await aqlQuery(
     query
       .select([
@@ -71,8 +72,10 @@ export async function exportQueryToCSV(query) {
         { Amount: 'amount' },
         { Cleared: 'cleared' },
         { Reconciled: 'reconciled' },
+        { balance: { $sumOver: '$amount' } },
       ])
-      .options({ splits: 'all' }),
+      // todo: make it work with 'all'
+      .options({ splits: 'inline' }),
   );
 
   const parentsPayees = new Map();
@@ -100,6 +103,7 @@ export async function exportQueryToCSV(query) {
           : trans.Cleared === true
             ? 'Cleared'
             : 'Not cleared',
+      Balance: trans.balance == null ? 0 : integerToAmount(trans.balance),
     };
   });
 
