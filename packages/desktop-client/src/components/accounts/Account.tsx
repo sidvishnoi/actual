@@ -1677,6 +1677,7 @@ class AccountInternal extends PureComponent<
       this.setState(state => ({
         sort: {
           ...state.sort,
+          field: headerClicked,
           ascDesc,
         },
       }));
